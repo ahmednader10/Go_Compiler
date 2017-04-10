@@ -1,0 +1,176 @@
+import java.lang.System;
+import java.io.*;
+
+class Lexer {
+
+	Yylex tokenizer;
+	public  Lexer(String fileName) 
+	{
+	  try
+	  {
+	  tokenizer=new Yylex(new BufferedReader(new FileReader(fileName)));
+	  }
+	  catch(Exception e)
+	  {
+	  
+	  }	 
+	}
+	public Token nextToken()
+	{
+		Token next=null;
+		try
+		{
+		 next=  tokenizer.getToken();
+		}
+		catch(Exception e)
+		{
+		}
+		return next;
+	}
+	}
+
+
+%%
+
+
+%function getToken
+%type Token
+%char
+%line
+
+
+%{
+	//initialize  variables to be used by class
+%}
+
+
+%init{
+
+//Add code to be executed on initialization of the lexer
+
+%init}
+
+UNICODELETTER = ([a-z A-Z])
+UNDERSCORE = (\_)
+LETTER = UNICODELETTER | UNDERSCORE
+UNICODEDIGIT = ([0-9])
+BREAK=(\break)
+DEFAULT = (\default)
+FUNC = (\func)
+CASE = (\case)
+STRUCT = (\struct)
+ELSE = (\else)
+PACKAGE = (\package)
+SWITCH = (\switch)
+CONST = (\const)
+IF = (\if)
+TYPE = (\type)
+FOR = (\for)
+IMPORT = (\import)
+RETURN = (\return)
+VAR = (\var)
+KEYWORD = BREAK | DEFAULT | FUNC | CASE | STRUCT | ELSE | PACKAGE | SWITCH | CONST | IF | TYPE | FOR | IMPORT | RETURN | VAR
+//IDENTIFIER = LETTER(LETTER | UNICODEDIGIT)*
+IDENTIFIER = ([a-z A-Z _]([a-z A-Z _ 0-9])*)
+OR = (\|\|)
+AND = (\&\&)
+EQUALREL = (\=\=)
+NOTEQUALREL = (\!\=)
+LESSTHANREL = (\<)
+LESSTHANOREQUALREL = (\<\=)
+GREATERTHANREL = (\>)
+GREATERTHANOREQUALREL = (\>\=)
+RELOP = EQUALREL | NOTEQUALREL | LESSTHANREL | LESSTHANOREQUALREL | GREATERTHANREL | GREATERTHANOREQUALREL 
+//INTLIT = ([1-9([0-9])* 0])
+ADDOP = (\+)
+SUBOP = (\-)
+ADDALL = ADDOP | SUBOP
+MULOP = (\*)
+MODOP = (\%)
+SHIFTLEFTOP = (\<\<)
+SHIFTRIGHTOP = (\>\>)
+MULALL = MULOP | MODOP | SHIFTLEFTOP | SHIFTRIGHTOP
+BINOP = OR | AND | RELOP | ADDALL | MULALL
+RAWSTRINGLIT = (\`[(.) \n]* \`)
+INTERPRETEDSTRINGLIT = (\"[(.) (\\[a b f n r t v \\ \' \"])+]\")
+STRINGLIT = RAWSTRINGLIT | INTERPRETEDSTRINGLIT
+OPENPARAN = (\()
+CLOSEPARAN = (\))
+OPENCURLY = (\{)
+CLOSECURLY = (\})
+OPENSQUARE = (\[)
+CLOSESQUARE = (\])
+SEMICOLON = (\;)
+COMMA = (\,)
+DOT = (\.)
+COLON = (\:)
+COLONEQUAL = (\:=)
+EQUAL = (\=)
+ASTRISK = (\*)
+EXCLAMATION = (\!)
+CDOTS = (\\cdots)
+LESSDASH = (\<\-)
+AMPERSAND = (\&)
+PERCENT = (\%)
+INC = (\+\+)
+DEC = (\-\-)
+BAR = (\|)
+SLASH = (\/)
+
+%eofval{
+//Add code to be executed when the end of the file is reached
+return (new Token(Token.EOF,yytext()));
+%eofval}
+
+%% 
+<YYINITIAL> {IDENTIFIER} {return (new Token(Token.IDENTIFIER,yytext()));}
+<YYINITIAL> {BREAK} {return (new Token(Token.BREAK,yytext()));}
+<YYINITIAL> {DEFAULT} {return (new Token(Token.DEFAULT,yytext()));}
+<YYINITIAL> {FUNC} {return (new Token(Token.FUNC,yytext()));}
+<YYINITIAL> {CASE} {return (new Token(Token.CASE,yytext()));}
+<YYINITIAL> {STRUCT} {return (new Token(Token.STRUCT,yytext()));}
+<YYINITIAL> {ELSE} {return (new Token(Token.ELSE,yytext()));}
+<YYINITIAL> {PACKAGE} {return (new Token(Token.PACKAGE,yytext()));}
+<YYINITIAL> {SWITCH} {return (new Token(Token.SWITCH,yytext()));}
+<YYINITIAL> {CONST} {return (new Token(Token.CONST,yytext()));}
+<YYINITIAL> {IF} {return (new Token(Token.IF,yytext()));}
+<YYINITIAL> {TYPE} {return (new Token(Token.TYPE,yytext()));}
+<YYINITIAL> {FOR} {return (new Token(Token.FOR,yytext()));}
+<YYINITIAL> {IMPORT} {return (new Token(Token.IMPORT,yytext()));}
+<YYINITIAL> {RETURN} {return (new Token(Token.RETURN,yytext()));}
+<YYINITIAL> {VAR} {return (new Token(Token.VAR,yytext()));}
+<YYINITIAL> {OR} {return (new Token(Token.OR_OP,yytext()));}
+<YYINITIAL> {AND} {return (new Token(Token.AND_OP,yytext()));}
+<YYINITIAL> {RELOP} {return (new Token(Token.REL_OP,yytext()));}
+
+<YYINITIAL> {ADDOP} {return (new Token(Token.PLUS,yytext()));}
+<YYINITIAL> {SUBOP} {return (new Token(Token.MINUS,yytext()));}
+<YYINITIAL> {STRINGLIT} {return (new Token(Token.STRING_LIT,yytext()));}
+<YYINITIAL> {OPENPARAN} {return (new Token(Token.OPEN_PARAN,yytext()));}
+<YYINITIAL> {CLOSEPARAN} {return (new Token(Token.CLOSE_PARAN,yytext()));}
+<YYINITIAL> {OPENCURLY} {return (new Token(Token.OPEN_CURLY,yytext()));}
+<YYINITIAL> {CLOSECURLY} {return (new Token(Token.CLOSE_CURLY,yytext()));}
+<YYINITIAL> {OPENSQUARE} {return (new Token(Token.OPEN_SQUARE,yytext()));}
+<YYINITIAL> {CLOSESQUARE} {return (new Token(Token.CLOSE_SQUARE,yytext()));}
+<YYINITIAL> {SEMICOLON} {return (new Token(Token.SEMI_COLON,yytext()));}
+<YYINITIAL> {COMMA} {return (new Token(Token.COMMA,yytext()));}
+<YYINITIAL> {DOT} {return (new Token(Token.DOT,yytext()));}
+<YYINITIAL> {COLON} {return (new Token(Token.COLON,yytext()));}
+<YYINITIAL> {COLONEQUAL} {return (new Token(Token.COLON_EQUAL,yytext()));}
+<YYINITIAL> {EQUAL} {return (new Token(Token.EQUAL,yytext()));}
+<YYINITIAL> {ASTRISK} {return (new Token(Token.ASTRISK,yytext()));}
+<YYINITIAL> {SHIFTLEFTOP} {return (new Token(Token.SHIFT_LEFT,yytext()));}
+<YYINITIAL> {SHIFTRIGHTOP} {return (new Token(Token.SHIFT_RIGHT,yytext()));}
+<YYINITIAL> {EXCLAMATION} {return (new Token(Token.EXCLAMATION,yytext()));}
+<YYINITIAL> {PERCENT} {return (new Token(Token.PERCENT,yytext()));}
+<YYINITIAL> {CDOTS} {return (new Token(Token.CDOTS,yytext()));}
+<YYINITIAL> {LESSDASH} {return (new Token(Token.LESS_DASH,yytext()));}
+<YYINITIAL> {AMPERSAND} {return (new Token(Token.AMBERSAND,yytext()));}
+<YYINITIAL> {INC} {return (new Token(Token.INCREMENT,yytext()));}
+<YYINITIAL> {DEC} {return (new Token(Token.DECREMENT,yytext()));}
+<YYINITIAL> {BAR} {return (new Token(Token.BAR,yytext()));}
+<YYINITIAL> {SLASH} {return (new Token(Token.SLASH,yytext()));}
+<YYINITIAL> . {
+  return new Token(Token.ERROR, "Invalid input: " + yytext());
+}
+
