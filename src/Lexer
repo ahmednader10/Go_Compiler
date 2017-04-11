@@ -50,80 +50,84 @@ class Lexer {
 
 %init}
 
-UNICODELETTER = ([a-z A-Z])
-UNDERSCORE = (\_)
-LETTER = UNICODELETTER | UNDERSCORE
-UNICODEDIGIT = ([0-9])
-BREAK=(\break)
-DEFAULT = (\default)
-FUNC = (\func)
-CASE = (\case)
-STRUCT = (\struct)
-ELSE = (\else)
-PACKAGE = (\package)
-SWITCH = (\switch)
-CONST = (\const)
-IF = (\if)
-TYPE = (\type)
-FOR = (\for)
-IMPORT = (\import)
-RETURN = (\return)
-VAR = (\var)
-KEYWORD = BREAK | DEFAULT | FUNC | CASE | STRUCT | ELSE | PACKAGE | SWITCH | CONST | IF | TYPE | FOR | IMPORT | RETURN | VAR
-//IDENTIFIER = LETTER(LETTER | UNICODEDIGIT)*
-IDENTIFIER = ([a-z A-Z _]([a-z A-Z _ 0-9])*)
-OR = (\|\|)
-AND = (\&\&)
-EQUALREL = (\=\=)
-NOTEQUALREL = (\!\=)
-LESSTHANREL = (\<)
-LESSTHANOREQUALREL = (\<\=)
-GREATERTHANREL = (\>)
-GREATERTHANOREQUALREL = (\>\=)
-RELOP = EQUALREL | NOTEQUALREL | LESSTHANREL | LESSTHANOREQUALREL | GREATERTHANREL | GREATERTHANOREQUALREL 
-//INTLIT = ([1-9([0-9])* 0])
-ADDOP = (\+)
-SUBOP = (\-)
-ADDALL = ADDOP | SUBOP
-MULOP = (\*)
-MODOP = (\%)
-SHIFTLEFTOP = (\<\<)
-SHIFTRIGHTOP = (\>\>)
-MULALL = MULOP | MODOP | SHIFTLEFTOP | SHIFTRIGHTOP
-BINOP = OR | AND | RELOP | ADDALL | MULALL
-RAWSTRINGLIT = (\`[(.) \n]* \`)
-INTERPRETEDSTRINGLIT = (\"[(.) (\\[a b f n r t v \\ \' \"])+]\")
-STRINGLIT = RAWSTRINGLIT | INTERPRETEDSTRINGLIT
-OPENPARAN = (\()
-CLOSEPARAN = (\))
-OPENCURLY = (\{)
-CLOSECURLY = (\})
-OPENSQUARE = (\[)
-CLOSESQUARE = (\])
-SEMICOLON = (\;)
-COMMA = (\,)
-DOT = (\.)
-COLON = (\:)
-COLONEQUAL = (\:=)
-EQUAL = (\=)
-ASTRISK = (\*)
-EXCLAMATION = (\!)
-CDOTS = (\\cdots)
-LESSDASH = (\<\-)
-AMPERSAND = (\&)
-PERCENT = (\%)
-INC = (\+\+)
-DEC = (\-\-)
-BAR = (\|)
-SLASH = (\/)
+
+NEWLINE=[\r\n]
+SPACE=[\ \t\b] 
+UNICODELETTER=([a-zA-Z])
+UNDERSCORE=(\_)
+LETTER=(UNICODELETTER|UNDERSCORE)
+UNICODEDIGIT=([0-9])
+BREAK=(break)
+DEFAULT=(default)
+FUNC=(func)
+CASE=(case)
+STRUCT=(struct)
+ELSE=(else)
+PACKAGE=(package)
+SWITCH=(switch)
+CONST=(const)
+IF=(if)
+TYPE=(type)
+FOR=(for)
+IMPORT=(import)
+RETURN=(return)
+VAR=(var)
+OR=(\|\|)
+AND=(&&)
+EQUALREL=(\=\=)
+NOTEQUALREL=(\!\=)
+LESSTHANREL=(\<)
+LESSTHANOREQUALREL=(\<\=)
+GREATERTHANREL=(\>)
+GREATERTHANOREQUALREL=(\>\=)
+RELOP=EQUALREL|NOTEQUALREL|LESSTHANREL|LESSTHANOREQUALREL|GREATERTHANREL|GREATERTHANOREQUALREL 
+INTLIT=([1-9]([0-9])*|0)
+ADDOP=(\+)
+SUBOP=(\-)
+ADDALL=(ADDOP|SUBOP)
+MULOP=(\*)
+MODOP=(\%)
+SHIFTLEFTOP=(\<\<)
+SHIFTRIGHTOP=(\>\>)
+MULALL=MULOP|MODOP|SHIFTLEFTOP|SHIFTRIGHTOP
+BINOP=OR|AND|RELOP|ADDALL|MULALL
+RAWSTRINGLIT=(`((.)|(\n))*`)
+INTERPRETEDSTRINGLIT=(\"(.)*\")
+//INTERPRETEDSTRINGLIT=(\"(([^\n\"]|(\\[abfnrtv\\\'\"]))+)\")
+STRINGLIT=({RAWSTRINGLIT}|{INTERPRETEDSTRINGLIT})
+OPENPARAN=(\()
+CLOSEPARAN=(\))
+OPENCURLY=(\{)
+CLOSECURLY=(\})
+OPENSQUARE=(\[)
+CLOSESQUARE=(\])
+SEMICOLON=(\;)
+COMMA=(\,)
+DOT=(\.)
+COLON=(\:)
+COLONEQUAL=(\:=)
+EQUAL=(\=)
+ASTRISK=(\*)
+EXCLAMATION=(\!)
+CDOTS=(\.\.\.)
+LESSDASH=(\<\-)
+AMPERSAND=(\&)
+PERCENT=(\%)
+INC=(\+\+)
+DEC=(\-\-)
+BAR=(\|)
+SLASH=(\/)
+IDENTIFIER=([a-zA-Z_]([a-zA-Z_0-9])*)
+
 
 %eofval{
 //Add code to be executed when the end of the file is reached
-return (new Token(Token.EOF,yytext()));
+return (new Token(Token.EOF,""));
 %eofval}
 
 %% 
-<YYINITIAL> {IDENTIFIER} {return (new Token(Token.IDENTIFIER,yytext()));}
+<YYINITIAL> {SPACE} {}
+<YYINITIAL> {NEWLINE} {}
 <YYINITIAL> {BREAK} {return (new Token(Token.BREAK,yytext()));}
 <YYINITIAL> {DEFAULT} {return (new Token(Token.DEFAULT,yytext()));}
 <YYINITIAL> {FUNC} {return (new Token(Token.FUNC,yytext()));}
@@ -142,10 +146,10 @@ return (new Token(Token.EOF,yytext()));
 <YYINITIAL> {OR} {return (new Token(Token.OR_OP,yytext()));}
 <YYINITIAL> {AND} {return (new Token(Token.AND_OP,yytext()));}
 <YYINITIAL> {RELOP} {return (new Token(Token.REL_OP,yytext()));}
-
+<YYINITIAL> {INTLIT} {return (new Token(Token.INT_LIT,yytext()));}
 <YYINITIAL> {ADDOP} {return (new Token(Token.PLUS,yytext()));}
 <YYINITIAL> {SUBOP} {return (new Token(Token.MINUS,yytext()));}
-<YYINITIAL> {STRINGLIT} {return (new Token(Token.STRING_LIT,yytext()));}
+<YYINITIAL> {STRINGLIT} {System.out.println("string literal");return (new Token(Token.STRING_LIT,yytext()));}
 <YYINITIAL> {OPENPARAN} {return (new Token(Token.OPEN_PARAN,yytext()));}
 <YYINITIAL> {CLOSEPARAN} {return (new Token(Token.CLOSE_PARAN,yytext()));}
 <YYINITIAL> {OPENCURLY} {return (new Token(Token.OPEN_CURLY,yytext()));}
@@ -170,6 +174,7 @@ return (new Token(Token.EOF,yytext()));
 <YYINITIAL> {DEC} {return (new Token(Token.DECREMENT,yytext()));}
 <YYINITIAL> {BAR} {return (new Token(Token.BAR,yytext()));}
 <YYINITIAL> {SLASH} {return (new Token(Token.SLASH,yytext()));}
+<YYINITIAL> {IDENTIFIER} {return (new Token(Token.IDENTIFIER,yytext()));}
 <YYINITIAL> . {
   return new Token(Token.ERROR, "Invalid input: " + yytext());
 }
