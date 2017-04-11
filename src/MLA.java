@@ -2,6 +2,7 @@
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Stack;
 
 /*
  * Class MLA
@@ -18,7 +19,7 @@ import java.io.IOException;
  */
 public class MLA {
 	public static void main(String[] args) {
-		String inFile = "Go.in";
+		String inFile = "Go10.in";
 		String outFile = "GoTest.out";
 
 		if (args.length > 1) {

@@ -1,5 +1,6 @@
 import java.lang.System;
 import java.io.*;
+import java.util.Stack;
 
 class Lexer {
 
@@ -41,6 +42,7 @@ class Lexer {
 
 %{
 	//initialize  variables to be used by class
+	public Stack<String> stack = new Stack();
 %}
 
 
@@ -57,6 +59,7 @@ UNICODELETTER=([a-zA-Z])
 UNDERSCORE=(\_)
 LETTER=(UNICODELETTER|UNDERSCORE)
 UNICODEDIGIT=([0-9])
+COMMENT=(\/\/(.)*)
 BREAK=(break)
 DEFAULT=(default)
 FUNC=(func)
@@ -80,20 +83,19 @@ LESSTHANREL=(\<)
 LESSTHANOREQUALREL=(\<\=)
 GREATERTHANREL=(\>)
 GREATERTHANOREQUALREL=(\>\=)
-RELOP=EQUALREL|NOTEQUALREL|LESSTHANREL|LESSTHANOREQUALREL|GREATERTHANREL|GREATERTHANOREQUALREL 
+RELOP=({EQUALREL}|{NOTEQUALREL}|{LESSTHANREL}|{LESSTHANOREQUALREL}|{GREATERTHANREL}|{GREATERTHANOREQUALREL}) 
 INTLIT=([1-9]([0-9])*|0)
 ADDOP=(\+)
 SUBOP=(\-)
-ADDALL=(ADDOP|SUBOP)
+ADDALL=({ADDOP}|{SUBOP})
 MULOP=(\*)
 MODOP=(\%)
 SHIFTLEFTOP=(\<\<)
 SHIFTRIGHTOP=(\>\>)
-MULALL=MULOP|MODOP|SHIFTLEFTOP|SHIFTRIGHTOP
-BINOP=OR|AND|RELOP|ADDALL|MULALL
+//MULALL=MULOP|MODOP|SHIFTLEFTOP|SHIFTRIGHTOP
+//BINOP=OR|AND|RELOP|ADDALL|MULALL
 RAWSTRINGLIT=(`((.)|(\n))*`)
-INTERPRETEDSTRINGLIT=(\"(.)*\")
-//INTERPRETEDSTRINGLIT=(\"(([^\n\"]|(\\[abfnrtv\\\'\"]))+)\")
+INTERPRETEDSTRINGLIT=(\"(([^\n\"]|(\\[abfnrtv\\\'\"]))+)\")
 STRINGLIT=({RAWSTRINGLIT}|{INTERPRETEDSTRINGLIT})
 OPENPARAN=(\()
 CLOSEPARAN=(\))
@@ -122,12 +124,13 @@ IDENTIFIER=([a-zA-Z_]([a-zA-Z_0-9])*)
 
 %eofval{
 //Add code to be executed when the end of the file is reached
-return (new Token(Token.EOF,""));
+return (new Token(Token.EOF,"Done"));
 %eofval}
 
 %% 
 <YYINITIAL> {SPACE} {}
 <YYINITIAL> {NEWLINE} {}
+<YYINITIAL> {COMMENT} {}
 <YYINITIAL> {BREAK} {return (new Token(Token.BREAK,yytext()));}
 <YYINITIAL> {DEFAULT} {return (new Token(Token.DEFAULT,yytext()));}
 <YYINITIAL> {FUNC} {return (new Token(Token.FUNC,yytext()));}
