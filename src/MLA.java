@@ -17,7 +17,7 @@ import java.util.Stack;
  * Output file will be automatically overwritten if exists.
  * 
  */
-//test
+//test 2
 public class MLA {
 	public static void main(String[] args) {
 		String inFile = "Go10.in";
